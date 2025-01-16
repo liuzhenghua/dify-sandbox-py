@@ -15,16 +15,12 @@ ENV PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 设置工作目录
 WORKDIR /app
+COPY . .
 
-# 复制依赖文件并安装
-COPY requirements.txt .
+# 安装自身依赖文件
 RUN pip install -r requirements.txt
 
-# 复制应用代码和启动脚本
-COPY app/ ./app/
-COPY start.sh .
-
-# 创建依赖目录并安装
+# 安装外部依赖
 RUN mkdir -p /dependencies
 COPY python-requirements.txt /dependencies
 RUN pip install -r /dependencies/python-requirements.txt
