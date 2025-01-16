@@ -18,7 +18,7 @@ WORKDIR /app
 
 # 复制依赖文件并安装
 COPY requirements.txt .
-pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 # 复制应用代码和启动脚本
 COPY app/ ./app/
@@ -27,7 +27,7 @@ COPY start.sh .
 # 创建依赖目录并安装
 RUN mkdir -p /dependencies
 COPY python-requirements.txt /dependencies
-pip install -r /dependencies/python-requirements.txt
+RUN pip install -r /dependencies/python-requirements.txt
 
 # 设置启动脚本权限
 RUN chmod +x start.sh
