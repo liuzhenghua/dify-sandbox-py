@@ -106,7 +106,8 @@ class LoggingConfig(BaseSettings):
                 'filename': log_file,
                 'maxBytes': 1024 * 1024 * 1024,
                 'backupCount': 5,
-                'formatter': 'default'
+                'formatter': 'default',
+                'encoding': 'utf8',
             }
             logging_config['root']['handlers'] = ['console', 'file']
 
@@ -120,7 +121,8 @@ class LoggingConfig(BaseSettings):
                 'filename': access_log_file,
                 'maxBytes': 1024 * 1024 * 1024,
                 'backupCount': 5,
-                'formatter': 'access'
+                'formatter': 'access',
+                'encoding': 'utf8',
             }
             logging_config['loggers']['uvicorn.access']['handlers'] = ['access', 'file_access']
 

@@ -30,9 +30,9 @@ class ConcurrencyMiddleware(BaseHTTPMiddleware):
             try:
                 async with self.semaphore:
                     response = await call_next(request)
-                elapsed_time = time.perf_counter() - start_time
-                logging.info(f"Request took {elapsed_time:.3f} seconds")
                 return response
             finally:
+                elapsed_time = time.perf_counter() - start_time
+                logging.info(f"Request '/v1/sandbox/run' took {elapsed_time:.3f} seconds")
                 self.current_requests -= 1
         return await call_next(request)

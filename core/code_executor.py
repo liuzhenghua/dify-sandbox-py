@@ -11,6 +11,10 @@ from typing import Dict, Any
 from config import app_config
 
 
+def _truncate_code(code: str, max_length: int = 1024):
+    return code[:max_length] + "..." if len(code) > max_length else code
+
+
 def _run_python_code_in_process(code: str) -> Dict[str, Any]:
     """在进程中执行Python代码的函数"""
     stdout_buffer = io.StringIO()
@@ -27,6 +31,7 @@ def _run_python_code_in_process(code: str) -> Dict[str, Any]:
             "error": stderr_buffer.getvalue() or None
         }
     except Exception as e:
+        logging.warning(f"执行代码时发生异常: {e}, output: {stdout_buffer.getvalue()}, code: {_truncate_code(code)}")
         return {
             "success": False,
             "output": stdout_buffer.getvalue(),
@@ -133,7 +138,7 @@ class CodeExecutor:
             return result
 
         except asyncio.TimeoutError:
-            logging.warning(f"代码执行超时 (>{self.timeout}秒)")
+            logging.warning(f"代码执行超时 (>{self.timeout}秒), code:{_truncate_code(code)}")
             return {
                 "success": False,
                 "output": "",
