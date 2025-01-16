@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from api.metric import metric_router
 from api.open_api import open_api_router
 from config import app_config
-from core import sig_term_handler
+from core import sig_term_handler, logging_filter
 from core.code_executor import code_executor
 from core.middleware.auth_middleware import AuthMiddleware
 from core.middleware.concurrency_middleware import ConcurrencyMiddleware
@@ -21,14 +21,17 @@ async def lifespan(local_app: FastAPI):
 
 def create_app() -> FastAPI:
     local_app = FastAPI(lifespan=lifespan)
+
+    logging.config.dictConfig(app_config.get_logging_config())
+    logging_filter.init_app(local_app)
+    # Initialize sig term handler to gracefully shutdown the app
+    sig_term_handler.init_app(local_app)
+
     local_app.state.stop_event = threading.Event()
     local_app.include_router(open_api_router)
     local_app.include_router(metric_router)
     local_app.add_middleware(AuthMiddleware)
     local_app.add_middleware(ConcurrencyMiddleware)
-
-    # Initialize sig term handler to gracefully shutdown the app
-    sig_term_handler.init_app(local_app)
     return local_app
 
 

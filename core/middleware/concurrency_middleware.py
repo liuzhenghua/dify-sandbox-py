@@ -27,6 +27,7 @@ class ConcurrencyMiddleware(BaseHTTPMiddleware):
                 return Response(code=429, message="Too many requests")
 
             self.current_requests += 1
+            request.app.state.current_requests = self.current_requests
             try:
                 async with self.semaphore:
                     response = await call_next(request)

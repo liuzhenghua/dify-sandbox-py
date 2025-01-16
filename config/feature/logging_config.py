@@ -29,14 +29,16 @@ class LoggingConfig(BaseSettings):
 
     LOG_FORMAT: str = Field(
         description='log format',
-        default='%(asctime)s.%(msecs)03d %(levelname)s [%(threadName)s] [] [%(filename)s#%(name)s:%(lineno)d] - %('
-                'message)s',
+        default='%(asctime)s.%(msecs)03d %(levelname)s [%(threadName)s] '
+                '[cur_req:%(current_requests)s|max_req:%(max_workers)s|proc:%(processName)s] '
+                '[%(filename)s#%(name)s:%(lineno)d] - %(message)s',
     )
 
     ACCESS_LOG_FORMAT: str = Field(
         description='unicorn access log format',
-        default='%(asctime)s.%(msecs)03d %(levelname)s [%(threadName)s] [] [%(filename)s#%(name)s:%(lineno)d] - %('
-                'client_addr)s "%(request_line)s" %(status_code)s',
+        default='%(asctime)s.%(msecs)03d %(levelname)s [%(threadName)s] '
+                '[cur_req:%(current_requests)s|max_req:%(max_workers)s|proc:%(processName)s] '
+                '[%(filename)s#%(name)s:%(lineno)d] - %(client_addr)s "%(request_line)s" %(status_code)s',
     )
 
     LOG_DATEFORMAT: Optional[str] = Field(
@@ -57,7 +59,7 @@ class LoggingConfig(BaseSettings):
     def __init__(self):
         super().__init__()
         self.logging_config = self.get_logging_config()
-        logging.config.dictConfig(self.get_logging_config())
+        # logging.config.dictConfig(self.get_logging_config())
 
     def get_logging_config(self):
         if self.logging_config:

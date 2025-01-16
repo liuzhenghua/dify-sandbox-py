@@ -31,7 +31,7 @@ def _run_python_code_in_process(code: str) -> Dict[str, Any]:
             "error": stderr_buffer.getvalue() or None
         }
     except Exception as e:
-        logging.warning(f"执行代码时发生异常: {e}, output: {stdout_buffer.getvalue()}, code: {_truncate_code(code)}")
+        logging.warning(f"执行代码时发生异常: {e}, code: {_truncate_code(code)}")
         return {
             "success": False,
             "output": stdout_buffer.getvalue(),

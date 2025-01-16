@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 
 from fastapi import APIRouter
@@ -12,8 +13,7 @@ metric_router = APIRouter()
 async def get_metrics(request: Request):
     app = request.app
     data = {}
-    pid = os.getpid()
-    data['pid'] = pid
+    data['process_name'] = multiprocessing.current_process().name
     data['max_workers'] = app_config.MAX_WORKERS
     data['max_requests'] = app_config.MAX_REQUESTS
     data['current_requests'] = app.state.current_requests if hasattr(app.state, 'current_requests') else 0
