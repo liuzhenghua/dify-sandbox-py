@@ -17,7 +17,7 @@ class Response(BaseModel):
 
     @staticmethod
     def success(data: Optional[Any] = None):
-        return Response(data=data).model_dump_json()
+        return Response(data=data)
 
 
 class CodeRunResult(BaseModel):
