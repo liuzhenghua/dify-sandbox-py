@@ -17,7 +17,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 return JSONResponse(
                     status_code=401,
                     content={
-                        "code": -401,
+                        "code": 401,
                         "message": "Unauthorized",
                         "data": None
                     }
