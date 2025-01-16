@@ -1,1 +1,8 @@
+# dify sandbox built-in
+httpx
+requests
+PySocks
+httpx[socks]
+
+# your extra
 regex

@@ -18,12 +18,12 @@ WORKDIR /app
 COPY . .
 
 # 安装自身依赖文件
-RUN pip install -r requirements.txt
+RUN pip install -r --no-cache-dir requirements.txt
 
 # 安装外部依赖
 RUN mkdir -p /dependencies
 COPY python-requirements.txt /dependencies
-RUN pip install -r /dependencies/python-requirements.txt
+RUN pip install -r --no-cache-dir /dependencies/python-requirements.txt
 
 # 设置启动脚本权限
 RUN chmod +x start.sh
