@@ -30,7 +30,7 @@ pytest tests/test_executor.py::test_run_python
 
 ## 压测
 ```python
-import threading
+import asyncio
 import httpx
 
 # URL and headers
@@ -66,27 +66,23 @@ print(result)
 """
 }
 
-def send_request():
+async def send_request():
     """Send a single HTTP POST request."""
-    try:
-        with httpx.Client() as client:
-            response = client.post(url, headers=headers, json=data)
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, headers=headers, json=data)
             print(f"Response: {response.status_code} {response.text}")
-    except Exception as e:
-        print(f"Error: {e}")
+        except Exception as e:
+            print(f"Error: {e}")
 
-def main():
-    """Send 100 requests using threads."""
-    threads = []
-    for _ in range(100):  # Adjust the number of threads if needed
-        thread = threading.Thread(target=send_request)
-        threads.append(thread)
-        thread.start()
-    
-    for thread in threads:
-        thread.join()
+async def main():
+    tasks = []
+    for _ in range(200):
+        tasks.append(send_request())
+        
+    await asyncio.gather(*tasks)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
 
 ```
