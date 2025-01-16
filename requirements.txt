@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+starlette
+pydantic
+pydantic_settings
+nodejs
+jinja2
