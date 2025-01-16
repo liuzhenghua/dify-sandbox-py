@@ -24,7 +24,7 @@ class ConcurrencyMiddleware(BaseHTTPMiddleware):
                     f"Too many requests, current requests: {self.current_requests}, "
                     f"max requests: {app_config.MAX_REQUESTS}"
                 )
-                return Response(code=429, message="Too many requests")
+                return Response(code=429, message="Too many requests").model_dump_json()
 
             self.current_requests += 1
             request.app.state.current_requests = self.current_requests
