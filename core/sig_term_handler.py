@@ -11,3 +11,4 @@ def _handler_termination_signal(signum, frame, app: FastAPI) -> None:
 
 def init_app(app: FastAPI) -> None:
     signal.signal(signal.SIGTERM, partial(_handler_termination_signal, app=app))
+    signal.signal(signal.SIGINT, partial(_handler_termination_signal, app=app))

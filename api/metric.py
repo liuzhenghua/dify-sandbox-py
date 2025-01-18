@@ -1,8 +1,8 @@
 import multiprocessing
-import os
 
 from fastapi import APIRouter
 from starlette.requests import Request
+from starlette.responses import PlainTextResponse
 
 from config import app_config
 
@@ -22,5 +22,5 @@ async def get_metrics(request: Request):
 @metric_router.get("/health")
 async def health_check(request: Request):
     if request.app.state.stop_event.is_set():
-        return "stopped", 500
+        return PlainTextResponse("stopped", status_code=503)
     return "ok"
