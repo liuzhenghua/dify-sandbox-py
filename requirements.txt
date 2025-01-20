@@ -5,3 +5,4 @@ pydantic
 pydantic_settings
 nodejs
 jinja2
+pytz
