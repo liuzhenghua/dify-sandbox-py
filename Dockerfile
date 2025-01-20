@@ -15,15 +15,23 @@ ENV PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 设置工作目录
 WORKDIR /app
-COPY . .
+ENV PYTHONPATH=/app
 
-# 安装自身依赖文件
-RUN pip install -r --no-cache-dir requirements.txt
+# 安装自身依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 安装外部依赖
+# 安装python沙箱执行的代码需要的额外依赖
 RUN mkdir -p /dependencies
 COPY python-requirements.txt /dependencies
-RUN pip install -r --no-cache-dir /dependencies/python-requirements.txt
+RUN pip install --no-cache-dir -r /dependencies/python-requirements.txt
+
+# 复制文件
+COPY start.sh .
+COPY api ./api
+COPY config ./config
+COPY core ./core
+COPY main.py .
 
 # 设置启动脚本权限
 RUN chmod +x start.sh
