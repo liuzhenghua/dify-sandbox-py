@@ -9,6 +9,7 @@ from contextlib import redirect_stdout, redirect_stderr
 from typing import Dict, Any
 
 from config import app_config
+from core.security_util import guard
 
 
 def _truncate_code(code: str, max_length: int = 1024):
@@ -17,29 +18,30 @@ def _truncate_code(code: str, max_length: int = 1024):
 
 def _run_python_code_in_process(code: str) -> Dict[str, Any]:
     """在进程中执行Python代码的函数"""
-    stdout_buffer = io.StringIO()
-    stderr_buffer = io.StringIO()
+    with guard():
+        stdout_buffer = io.StringIO()
+        stderr_buffer = io.StringIO()
 
-    try:
-        with redirect_stdout(stdout_buffer), redirect_stderr(stderr_buffer):
-            global_namespace = {}
-            exec(code, global_namespace)
+        try:
+            with redirect_stdout(stdout_buffer), redirect_stderr(stderr_buffer):
+                global_namespace = {}
+                exec(code, global_namespace)
 
-        return {
-            "success": True,
-            "output": stdout_buffer.getvalue(),
-            "error": stderr_buffer.getvalue() or None
-        }
-    except Exception as e:
-        logging.warning(f"执行代码时发生异常: {e}, code: {_truncate_code(code)}")
-        return {
-            "success": False,
-            "output": stdout_buffer.getvalue(),
-            "error": str(e)
-        }
-    finally:
-        stdout_buffer.close()
-        stderr_buffer.close()
+            return {
+                "success": True,
+                "output": stdout_buffer.getvalue(),
+                "error": stderr_buffer.getvalue() or None
+            }
+        except Exception as e:
+            logging.warning(f"执行代码时发生异常: {e}, code: {_truncate_code(code)}")
+            return {
+                "success": False,
+                "output": stdout_buffer.getvalue(),
+                "error": str(e)
+            }
+        finally:
+            stdout_buffer.close()
+            stderr_buffer.close()
 
 
 def _run_nodejs_code_in_process(code: str) -> Dict[str, Any]:
