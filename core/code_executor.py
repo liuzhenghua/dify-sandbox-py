@@ -9,6 +9,11 @@ from contextlib import redirect_stdout, redirect_stderr
 from typing import Dict, Any
 
 from config import app_config
+
+
+unlink = os.unlink
+
+
 from core.security_util import guard
 
 
@@ -63,7 +68,7 @@ def _run_nodejs_code_in_process(code: str) -> Dict[str, Any]:
         stdout, stderr = process.communicate()
 
         # 删除临时文件
-        os.unlink(temp_file_path)
+        unlink(temp_file_path)
 
         if process.returncode == 0:
             return {
