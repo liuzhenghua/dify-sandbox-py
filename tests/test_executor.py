@@ -1,5 +1,5 @@
 import pytest
-from app import executor
+from core import code_executor
 
 code = """
 # declare main function
@@ -26,5 +26,5 @@ print(result)
 """
 
 def test_run_python():
-    ret = executor._run_python_code_in_process(code)
+    ret = code_executor._run_python_code_in_process(code)
     print(ret)

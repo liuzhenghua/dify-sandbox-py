@@ -5,8 +5,8 @@ import os
 import subprocess
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import redirect_stdout, redirect_stderr
 from typing import Dict, Any
+from functools import partial
 
 from config import app_config
 
@@ -25,20 +25,18 @@ def _run_python_code_in_process(code: str) -> Dict[str, Any]:
     """在进程中执行Python代码的函数"""
     with guard():
         stdout_buffer = io.StringIO()
-        stderr_buffer = io.StringIO()
 
         try:
-            with redirect_stdout(stdout_buffer), redirect_stderr(stderr_buffer):
-                global_namespace = {}
-                exec(code, global_namespace)
+            global_namespace = {"print", partial(print, file=stdout_buffer)}
+            exec(code, global_namespace)
 
             return {
                 "success": True,
                 "output": stdout_buffer.getvalue(),
-                "error": stderr_buffer.getvalue() or None
+                "error": None
             }
         except Exception as e:
-            logging.warning(f"执行代码时发生异常: {e}, code: {_truncate_code(code)}")
+            logging.warning(f"执行代码时发生异常: {e}, code: {_truncate_code(code)}", exc_info=True)
             return {
                 "success": False,
                 "output": stdout_buffer.getvalue(),
@@ -46,7 +44,6 @@ def _run_python_code_in_process(code: str) -> Dict[str, Any]:
             }
         finally:
             stdout_buffer.close()
-            stderr_buffer.close()
 
 
 def _run_nodejs_code_in_process(code: str) -> Dict[str, Any]:
